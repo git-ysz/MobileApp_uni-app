@@ -1,0 +1,47 @@
+{
+	"pages": [
+		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "汽车维修",
+				"app-plus": {
+          "bounce": "none" //禁止回弹
+				}
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor": "#1989FA",
+				"app-plus": {
+          "bounce": "none" //禁止回弹
+        }
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationStyle": "default",
+		"navigationBarTitleText": "汽车维修",
+		"navigationBarTextStyle": "black",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8" //小程序窗口背景色
+	},
+  //模式配置，仅开发期间生效
+  "condition": {
+    "current": 0, //当前激活的模式（list 的索引项）
+    "list": [
+      {
+      	"name": "主页", //模式名称
+      	"path": "pages/index/index", //启动页面，必选
+      	"query": "page=index&a=1" //启动参数，在页面的onLoad函数里面得到。
+      },
+      {
+      	"name": "登录页", //模式名称
+      	"path": "pages/login/login", //启动页面，必选
+      	"query": "page=login&a=2" //启动参数，在页面的onLoad函数里面得到。
+      }
+    ]
+  }
+}

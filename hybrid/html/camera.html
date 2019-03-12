@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Camera selection</title>
+    <!-- <link rel="stylesheet" href="./app.css" /> -->
+    <style>
+      body,html {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      #video {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border: none;
+        pointer-events: none;
+        display: none;
+      }
+      .controls {
+        position: fixed;
+        top: 100px;
+        left: 50px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <div class="controls">
+        <button id="button">Get camera</button>
+        <select id="select">
+          <option></option>
+        </select>
+      </div>
+      <video id="video" autoplay playsinline></video>
+      <button id="goBack">返回</button>
+    </main>
+    <script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.0.2.2.js"></script>
+    <script>
+      const goBack = document.getElementById('goBack');
+      document.addEventListener('UniAppJSBridgeReady', function() {
+        goBack.onclick = function () {
+          uni.reLaunch({
+            url: '/pages/index/index'
+          })
+        }
+        uni.postMessage({
+          data: {
+            action: 'message'
+          }
+        });
+        uni.getEnv(function(res) {
+          console.log('当前环境：' + JSON.stringify(res));
+        });
+      });
+    </script>
+    <script>
+      const video = document.getElementById('video');
+      const button = document.getElementById('button');
+      const select = document.getElementById('select');
+      let currentStream;
+
+      function stopMediaTracks(stream) {
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }
+
+      function gotDevices(mediaDevices) {
+        setTimeout(() => {
+          video.style.display = 'block';
+        }, 500)
+//         select.innerHTML = '';
+//         select.appendChild(document.createElement('option'));
+//         let count = 1;
+//         mediaDevices.forEach(mediaDevice => {
+//           if (mediaDevice.kind === 'videoinput') {
+//             const option = document.createElement('option');
+//             option.value = mediaDevice.deviceId;
+//             const label = mediaDevice.label || `Camera ${count++}`;
+//             const textNode = document.createTextNode(label);
+//             option.appendChild(textNode);
+//             select.appendChild(option);
+//           }
+//         });
+      }
+      // navigator.mediaDevices.enumerateDevices().then(gotDevices);
+      
+      window.onload = function(event) {
+        if (typeof currentStream !== 'undefined') {
+          stopMediaTracks(currentStream);
+        }
+        const videoConstraints = {};
+        if (select.value === '') {
+          videoConstraints.facingMode = 'environment';
+        } else {
+          videoConstraints.deviceId = {
+            exact: select.value
+          };
+        }
+        const constraints = {
+          video: videoConstraints,
+          audio: false
+        };
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then(stream => {
+            currentStream = stream;
+            video.srcObject = stream;
+            video.onloadedmetadata = function(e) {
+              video.play();
+            };
+            // return navigator.mediaDevices.enumerateDevices();
+          })
+          .then(gotDevices)
+          .catch(error => {
+            console.error(error);
+          });
+      }
+    </script>
+  </body>
+
+</html>
